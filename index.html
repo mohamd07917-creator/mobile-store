@@ -11,6 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
+/* نفس الأنماط السابقة - احتفظ بها كما هي */
 :root{
   --bg:#0a0f1e;--bg2:#0f1628;--bg3:#131d35;
   --card:#16213e;--card2:#1a2744;
@@ -172,9 +173,9 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 <div class="page" id="page-inventory"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="font-size:1.15rem;font-weight:800;">📦 المخزون</div><div><button class="btn btn-outline btn-sm" onclick="window.printBarcodes()">🖨️ الباركودات</button><button class="btn btn-primary btn-sm admin-only" onclick="window.showPage('add-product')">➕ إضافة</button></div></div><div class="search-box"><span class="search-icon">🔍</span><input type="text" class="form-control" placeholder="بحث..." oninput="window.filterInventory(this.value)" id="inv-search"></div><div class="cat-filter" id="cat-filter"></div><div class="inv-grid" id="inventory-grid"></div></div>
 <div class="page admin-only" id="page-add-product"><div class="grid-2"><div class="card"><div class="card-title">➕ إضافة صنف جديد</div><div class="form-group"><label>اسم الصنف</label><input id="prod-name" class="form-control"></div><div class="form-group"><label>الفئة</label><select id="prod-cat" class="form-control"><option>شواحن</option><option>كيبلات</option><option>بطاريات</option><option>كفرات</option><option>سماعات</option><option>أخرى</option></select></div><div class="form-group"><label>سعر البيع (د.ع)</label><input id="prod-price" type="number" class="form-control"></div><div class="form-group"><label>سعر الشراء (تكلفة)</label><input id="prod-cost" type="number" class="form-control"></div><div class="form-group"><label>الكمية</label><input id="prod-qty" type="number" value="1" class="form-control"></div><div class="form-group"><label>حد التنبيه</label><input id="prod-alert" type="number" value="3" class="form-control"></div><button class="btn btn-primary" onclick="window.addProduct()" style="width:100%;">➕ إضافة</button></div><div class="card"><div class="card-title">🏷️ معاينة الباركود</div><div id="barcode-preview-section" style="text-align:center;padding:30px;"><div style="font-size:3rem;">🏷️</div><p>أضف صنفاً لمعاينة الباركود</p></div><div id="barcode-actions" style="display:none;margin-top:12px;"><button class="btn btn-success btn-sm" onclick="window.printLastBarcode()">🖨️ طباعة</button></div></div></div></div>
 <div class="page" id="page-scan"><div class="grid-2"><div class="card"><div class="card-title">📷 مسح الباركود</div><div id="scanner-wrap"><div id="scanner-vc" style="min-height:80px;padding:20px;text-align:center;">اضغط تشغيل الكاميرا</div></div><div id="scan-status">جاهز للمسح</div><div><button class="btn btn-primary btn-sm" onclick="window.startScanner()">📷 تشغيل</button><button class="btn btn-danger btn-sm" onclick="window.stopScanner()">⏹ إيقاف</button></div><div class="form-group"><label>أدخل الباركود يدوياً</label><div style="display:flex;gap:8px;"><input id="manual-barcode" class="form-control" onkeydown="if(event.key==='Enter')window.doManualLookup()"><button class="btn btn-primary btn-sm" onclick="window.doManualLookup()">بحث</button></div></div><div class="form-group"><label>اختر من المخزون</label><select id="product-dropdown" class="form-control" onchange="window.onDropdownChange()"><option>-- اختر منتجاً --</option></select></div></div><div class="card"><div class="card-title">🛒 تفاصيل البيع</div><div id="state-idle" style="text-align:center;padding:40px;"><div style="font-size:3rem;">🔍</div><p>امسح أو اختر منتجاً</p></div><div id="state-found" style="display:none;"><div id="product-info" style="background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:14px;"></div><div class="form-group"><label>الكمية</label><input id="r-qty" type="number" value="1" class="form-control"></div><div class="form-group"><label>سعر البيع</label><input id="r-price" type="number" class="form-control"></div><div class="form-group"><label>نوع البيع</label><select id="r-type" class="form-control" onchange="window.toggleDebtor()"><option>نقدي</option><option>آجل</option></select></div><div id="debtor-wrap" style="display:none;"><label>اسم المدين</label><input id="r-debtor" class="form-control"></div><button class="btn btn-success" onclick="window.doSell()" style="width:100%;">💰 تأكيد البيع</button></div><div id="state-notfound" style="display:none;text-align:center;padding:30px;"><div style="font-size:2.5rem;">❌</div><p>المنتج غير موجود</p></div></div></div></div>
-<div class="page" id="page-sales"><div class="card"><div class="card-title" style="justify-content:space-between;"><span>💰 سجل المبيعات</span><div><input type="date" id="sales-date-filter" onchange="window.renderSalesTable()" class="form-control" style="width:auto;"><button class="btn btn-outline btn-sm" onclick="window.resetSalesFilter()">الكل</button><button class="btn btn-outline btn-sm" onclick="window.printSalesReport()">🖨️ طباعة</button></div></div><div class="table-wrap">\n<table>\n<thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>الإجمالي</th><th>النوع</th><th>المدين</th><th>التاريخ</th><th>إجراء</th></tr></thead>\n<tbody id="sales-table-body"></tbody>\n</table>\n</div></div></div>
-<div class="page" id="page-report"><div class="report-nav" style="display:flex;gap:10px;margin-bottom:18px;"><button class="btn btn-outline btn-sm" onclick="window.changeMonth(-1)">◀</button><div id="month-display" class="month-display"></div><button class="btn btn-outline btn-sm" onclick="window.changeMonth(1)">▶</button><button class="btn btn-primary btn-sm" onclick="window.printReport()">🖨️ طباعة</button><button class="btn btn-danger btn-sm admin-only" onclick="window.deleteMonthConfirm()">🗑️ حذف هذا الشهر</button></div><div class="grid-4"><div class="stat-box cyan"><div class="sb-val" id="m-count">0</div><div class="sb-lbl">عدد المبيعات</div></div><div class="stat-box gold"><div class="sb-val" id="m-cash">0</div><div class="sb-lbl">نقدي</div></div><div class="stat-box red"><div class="sb-val" id="m-debt">0</div><div class="sb-lbl">آجل</div></div><div class="stat-box green"><div class="sb-val" id="m-total">0</div><div class="sb-lbl">الإجمالي</div></div></div><div class="card"><div class="card-title">🗑️ حذف مبيعات يوم معين</div><div style="display:flex;gap:10px;"><input type="date" id="delete-day-input" class="form-control"><button class="btn btn-danger btn-sm admin-only" onclick="window.deleteDayConfirm()">🗑️ حذف</button></div></div><div class="card"><div class="card-title">تفاصيل مبيعات الشهر</div><div class="table-wrap">\n<table>\n<thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>الإجمالي</th><th>النوع</th><th>التاريخ</th></tr></thead>\n<tbody id="monthly-body"></tbody>\n</table>\n</div></div></div>
-<div class="page" id="page-debts"><div class="card"><div class="card-title">⏳ سجل الآجل</div><div id="debts-summary" style="display:flex;gap:12px;margin-bottom:16px;"></div><div class="table-wrap">\n<table>\n<thead><tr><th>المدين</th><th>المنتج</th><th>المبلغ</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>\n<tbody id="debts-body"></tbody>\n</table>\n</div></div></div>
+<div class="page" id="page-sales"><div class="card"><div class="card-title" style="justify-content:space-between;"><span>💰 سجل المبيعات</span><div><input type="date" id="sales-date-filter" onchange="window.renderSalesTable()" class="form-control" style="width:auto;"><button class="btn btn-outline btn-sm" onclick="window.resetSalesFilter()">الكل</button><button class="btn btn-outline btn-sm" onclick="window.printSalesReport()">🖨️ طباعة</button></div></div><div class="table-wrap">\n<table>\n<thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>الإجمالي</th><th>النوع</th><th>المدين</th><th>البائع</th><th>التاريخ</th><th>إجراء</th></tr></thead>\n<tbody id="sales-table-body"></tbody>\n</table>\n</div></div></div>
+<div class="page" id="page-report"><div class="report-nav" style="display:flex;gap:10px;margin-bottom:18px;"><button class="btn btn-outline btn-sm" onclick="window.changeMonth(-1)">◀</button><div id="month-display" class="month-display"></div><button class="btn btn-outline btn-sm" onclick="window.changeMonth(1)">▶</button><button class="btn btn-primary btn-sm" onclick="window.printReport()">🖨️ طباعة</button><button class="btn btn-danger btn-sm admin-only" onclick="window.deleteMonthConfirm()">🗑️ حذف هذا الشهر</button></div><div class="grid-4"><div class="stat-box cyan"><div class="sb-val" id="m-count">0</div><div class="sb-lbl">عدد المبيعات</div></div><div class="stat-box gold"><div class="sb-val" id="m-cash">0</div><div class="sb-lbl">نقدي</div></div><div class="stat-box red"><div class="sb-val" id="m-debt">0</div><div class="sb-lbl">آجل</div></div><div class="stat-box green"><div class="sb-val" id="m-total">0</div><div class="sb-lbl">الإجمالي</div></div></div><div class="card"><div class="card-title">🗑️ حذف مبيعات يوم معين</div><div style="display:flex;gap:10px;"><input type="date" id="delete-day-input" class="form-control"><button class="btn btn-danger btn-sm admin-only" onclick="window.deleteDayConfirm()">🗑️ حذف</button></div></div><div class="card"><div class="card-title">تفاصيل مبيعات الشهر</div><div class="table-wrap">\n<table>\n<thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>الإجمالي</th><th>النوع</th><th>البائع</th><th>التاريخ</th></tr></thead>\n<tbody id="monthly-body"></tbody>\n</table>\n</div></div></div>
+<div class="page" id="page-debts"><div class="card"><div class="card-title">⏳ سجل الآجل</div><div id="debts-summary" style="display:flex;gap:12px;margin-bottom:16px;"></div><div class="table-wrap">\n<table>\n<thead><tr><th>المدين</th><th>المنتج</th><th>المبلغ</th><th>التاريخ</th><th>البائع</th><th>الحالة</th><th>إجراء</th></tr></thead>\n<tbody id="debts-body"></tbody>\n</table>\n</div></div></div>
 <div class="page admin-only" id="page-settings"><div class="card"><div class="card-title">⚙️ الإعدادات والنسخ الاحتياطي</div><div class="settings-section"><h3>📲 التطبيق</h3><div><button class="btn btn-primary btn-sm" id="install-btn-settings" onclick="window.installPWA()">📲 تثبيت</button><button class="btn btn-outline btn-sm" onclick="window.requestNotifPerm()">🔔 الإشعارات</button></div></div><div class="settings-section"><h3>💾 النسخ الاحتياطي</h3><div><button class="btn btn-outline btn-sm" onclick="window.exportData()">📤 تصدير JSON</button><button class="btn btn-outline btn-sm" onclick="document.getElementById('import-file').click()">📥 استيراد JSON</button><input type="file" id="import-file" style="display:none" accept=".json" onchange="window.handleImport(event)"></div></div><div class="settings-section danger-zone"><h3>⚠️ منطقة الخطر</h3><div><div><div style="font-weight:700;">حذف جميع المبيعات</div><button class="btn btn-warning btn-sm" onclick="window.clearSalesConfirm()">🗑️ حذف المبيعات</button></div><div><div style="font-weight:700;">حذف كل البيانات</div><button class="btn btn-danger btn-sm" onclick="window.clearAllConfirm()">💥 حذف كل البيانات</button></div></div></div><div class="settings-section"><h3>ℹ️ معلومات النظام</h3><div>👤 المستخدم الحالي: <strong id="cur-user-info" style="color:var(--accent);">—</strong></div><div>📦 عدد الأصناف: <strong id="info-products">0</strong></div><div>🛒 إجمالي المبيعات: <strong id="info-sales">0</strong></div><div>⏳ الديون المعلقة: <strong id="info-debts">0</strong></div></div><hr><button class="btn btn-danger btn-sm" onclick="window.confirmLogout()">🚪 تسجيل الخروج</button></div></div>
 </div></div>
 
@@ -270,16 +271,14 @@ window.closeSaleSuccess = function() { document.getElementById("sale-success-ove
 window.printLastInvoice = function() { if (lastSale) printInvoice(lastSale); window.closeSaleSuccess(); };
 function printInvoice(s) {
   const w = window.open("", "_blank");
-  w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>فاتورة</title><style>body{font-family:Tajawal;padding:30px;}h2{text-align:center;}.row{display:flex;justify-content:space-between;margin:8px 0;}</style></head><body><h2>📱 موبايل ستور برو</h2><div>${new Date(s.date).toLocaleString()}</div><hr><div class="row"><span>المنتج</span><span>${s.productName}</span></div><div class="row"><span>الكمية</span><span>${s.qty}</span></div><div class="row"><span>السعر</span><span>${s.price} د.ع</span></div><div class="row"><span>الإجمالي</span><span>${s.total} د.ع</span></div><div class="row"><span>النوع</span><span>${s.type}</span></div>${s.debtorName?`<div class="row"><span>المدين</span><span>${s.debtorName}</span></div>`:""}<hr><div>شكراً لتسوقكم</div></body></html>`);
+  w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>فاتورة</title><style>body{font-family:Tajawal;padding:30px;}h2{text-align:center;}.row{display:flex;justify-content:space-between;margin:8px 0;}</style></head><body><h2>📱 موبايل ستور برو</h2><div>${new Date(s.date).toLocaleString()}</div><hr><div class="row"><span>المنتج</span><span>${s.productName}</span></div><div class="row"><span>الكمية</span><span>${s.qty}</span></div><div class="row"><span>السعر</span><span>${s.price} د.ع</span></div><div class="row"><span>الإجمالي</span><span>${s.total} د.ع</span></div><div class="row"><span>النوع</span><span>${s.type}</span></div><div class="row"><span>البائع</span><span>${s.seller || "غير محدد"}</span></div>${s.debtorName?`<div class="row"><span>المدين</span><span>${s.debtorName}</span></div>`:""}<hr><div>شكراً لتسوقكم</div></body></html>`);
   w.document.close(); w.print();
 }
 
-// Firebase CRUD (without calling load again)
-async function addProductToDB(product) {
-  await setDoc(doc(productsCol, product.id), product);
-  notify(`✅ تم رفع المنتج "${product.name}" إلى السيرفر`, "success");
-}
+// Firebase CRUD
+async function addProductToDB(product) { await setDoc(doc(productsCol, product.id), product); notify(`✅ تم رفع المنتج "${product.name}" إلى السيرفر`, "success"); }
 async function deleteProductFromDB(id) { await deleteDoc(doc(productsCol, id)); }
+async function updateProductToDB(id, updatedData) { await updateDoc(doc(productsCol, id), updatedData); notify(`تم تحديث المنتج`, "success"); }
 async function updateProductQty(id, newQty) { await updateDoc(doc(productsCol, id), { qty: newQty }); }
 async function addSaleToDB(sale) { await setDoc(doc(salesCol, sale.id), sale); }
 async function deleteSaleFromDB(id) { await deleteDoc(doc(salesCol, id)); }
@@ -306,18 +305,13 @@ function subscribeSales() {
   const q = query(salesCol, orderBy("date", "desc"));
   unsubscribeSales = onSnapshot(q, (snapshot) => {
     const newSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    // Check if something changed to show notification
-    const oldIds = new Set(sales.map(s => s.id));
-    const newIds = new Set(newSales.map(s => s.id));
-    if (sales.length > 0 && newSales.length !== sales.length) {
-      notify("🔄 تم تحديث المبيعات من السيرفر", "info");
-    }
+    if (sales.length > 0 && newSales.length !== sales.length) notify("🔄 تم تحديث المبيعات من السيرفر", "info");
     sales = newSales;
     renderSalesTable();
     renderDashboard();
     renderReport();
     updateHeader();
-    renderDebts(); // debts might be affected if a sale deleted
+    renderDebts();
   }, (error) => { notify("خطأ في تحميل المبيعات", "error"); });
 }
 
@@ -325,9 +319,7 @@ function subscribeDebts() {
   if (unsubscribeDebts) unsubscribeDebts();
   unsubscribeDebts = onSnapshot(debtsCol, (snapshot) => {
     const newDebts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (debts.length > 0 && JSON.stringify(newDebts) !== JSON.stringify(debts)) {
-      notify("🔄 تم تحديث الديون من السيرفر", "info");
-    }
+    if (debts.length > 0 && JSON.stringify(newDebts) !== JSON.stringify(debts)) notify("🔄 تم تحديث الديون من السيرفر", "info");
     debts = newDebts;
     renderDebts();
     renderDashboard();
@@ -359,6 +351,25 @@ window.addProduct = async function() {
   document.getElementById("prod-qty").value = "1";
   window.lastAddedProduct = newProduct;
   renderBarcodePreview(newProduct);
+};
+
+// تعديل المنتج
+window.editProduct = async function(id) {
+  if (!isAdmin()) { notify("غير مصرح", "error"); return; }
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const newName = prompt("اسم المنتج:", p.name);
+  if (newName === null) return;
+  const newCat = prompt("الفئة (شواحن/كيبلات/بطاريات/كفرات/سماعات/أخرى):", p.cat);
+  if (newCat === null) return;
+  const newPrice = parseFloat(prompt("سعر البيع (د.ع):", p.price));
+  if (isNaN(newPrice)) return;
+  const newCost = parseFloat(prompt("سعر الشراء (تكلفة) (د.ع):", p.cost || 0));
+  if (isNaN(newCost)) return;
+  const newAlert = parseInt(prompt("حد التنبيه للمخزون المنخفض:", p.alert));
+  if (isNaN(newAlert)) return;
+  const updated = { name: newName.trim(), cat: newCat, price: newPrice, cost: newCost, alert: newAlert };
+  await updateProductToDB(p.id, updated);
 };
 
 let lastAddedProduct = null;
@@ -404,6 +415,7 @@ window.filterInventory = function(search) {
       <div style="color:var(--text2);font-size:0.72rem;">🏷️ ${p.barcode}</div>
       <div style="display:flex;gap:5px;margin-top:6px;">
         ${isAdmin() ? `<button class="btn btn-success btn-sm" onclick="window.addQtyPrompt('${p.id}')">+</button>` : ""}
+        ${isAdmin() ? `<button class="btn btn-warning btn-sm" onclick="window.editProduct('${p.id}')">✏️ تعديل</button>` : ""}
         ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="window.delProductConfirm('${p.id}')">🗑️</button>` : ""}
         <button class="btn btn-outline btn-sm" onclick="window.showBarcode1('${p.id}')">🏷️</button>
       </div>
@@ -500,16 +512,17 @@ window.doSell = async function() {
   if (type === "آجل" && !debtor) { notify("أدخل اسم المدين", "error"); return; }
   const total = price * qty;
   const saleId = "S" + Date.now();
-  const sale = { id: saleId, productId: p.id, productName: p.name, qty, price, total, type, debtorName: debtor || null, date: new Date().toISOString() };
+  const seller = currentUser?.username === "المدير" ? "مدير" : "كاشير";
+  const sale = { id: saleId, productId: p.id, productName: p.name, qty, price, total, type, debtorName: debtor || null, seller, date: new Date().toISOString() };
   await addSaleToDB(sale);
   p.qty -= qty;
   await updateProductQty(p.id, p.qty);
   if (type === "آجل") {
-    const debt = { saleId, name: debtor, product: p.name, amount: total, date: new Date().toISOString(), paid: false };
+    const debt = { saleId, name: debtor, product: p.name, amount: total, date: new Date().toISOString(), seller, paid: false };
     await addDebtToDB(debt);
   }
   lastSale = sale;
-  notify(`💰 تم بيع ${p.name} — ${total.toLocaleString()} د.ع`, "sale");
+  notify(`💰 تم بيع ${p.name} — ${total.toLocaleString()} د.ع (بواسطة ${seller})`, "sale");
   showSaleSuccess(sale);
   SELECTED_PRODUCT = null;
   document.getElementById("state-idle").style.display = "block";
@@ -532,13 +545,14 @@ window.renderSalesTable = function() {
   const filterDate = document.getElementById("sales-date-filter")?.value || "";
   const filtered = filterDate ? sales.filter(s => s.date.startsWith(filterDate)) : sales;
   const tbody = document.getElementById("sales-table-body");
-  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">لا توجد مبيعات</td></tr>'; return; }
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">لا توجد مبيعات</td></tr>'; return; }
   tbody.innerHTML = filtered.slice().reverse().map((s, i) => `
     <tr>
       <td>${i+1}</td><td>${s.productName}</td><td>${s.qty}</td>
       <td style="color:var(--gold);">${s.total.toLocaleString()}</td>
       <td><span class="badge ${s.type==='نقدي'?'badge-green':'badge-yellow'}">${s.type}</span></td>
       <td>${s.debtorName || "—"}</td>
+      <td>${s.seller || "غير محدد"}</td>
       <td>${new Date(s.date).toLocaleDateString("ar-IQ")}</td>
       <td>${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="window.delSaleConfirm('${s.id}')">حذف</button>` : ""}</td>
     </tr>
@@ -565,12 +579,13 @@ function renderDebts() {
     <div style="background:rgba(0,212,255,0.08);border-radius:10px;padding:10px;"><div style="font-size:1.3rem;color:var(--yellow);">${active.length}</div><div>معاملات معلقة</div></div>
   `;
   const tbody = document.getElementById("debts-body");
-  if (!active.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✅ لا توجد ديون معلقة</td></tr>'; return; }
+  if (!active.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">✅ لا توجد ديون معلقة</td></tr>'; return; }
   tbody.innerHTML = active.map(d => `
     <tr>
       <td><strong>${d.name}</strong></td><td>${d.product}</td>
       <td style="color:var(--red);">${d.amount.toLocaleString()}</td>
       <td>${new Date(d.date).toLocaleDateString("ar-IQ")}</td>
+      <td>${d.seller || "غير محدد"}</td>
       <td><span class="badge badge-red">معلق</span></td>
       <td><button class="btn btn-success btn-sm" onclick="window.payDebtConfirm('${d.saleId}')">✅ تسديد</button></td>
     </tr>
@@ -638,7 +653,7 @@ function renderReport() {
   document.getElementById("m-total").innerText = (cash+debt).toLocaleString();
   const tbody = document.getElementById("monthly-body");
   if (!monthSales.length) { tbody.innerHTML = '<tr><td colspan="6">لا توجد مبيعات</td></tr>'; return; }
-  tbody.innerHTML = monthSales.slice().reverse().map((s,i)=>`<tr><td>${i+1}</td><td>${s.productName}</td><td>${s.qty}</td><td>${s.total}</td><td>${s.type}</td><td>${new Date(s.date).toLocaleDateString()}</td></tr>`).join("");
+  tbody.innerHTML = monthSales.slice().reverse().map((s,i)=>`<tr><td>${i+1}</td><td>${s.productName}</td><td>${s.qty}</td><td>${s.total}</td><td>${s.type}</td><td>${s.seller || "غير محدد"}</td><td>${new Date(s.date).toLocaleDateString()}</td></tr>`).join("");
 }
 window.changeMonth = function(delta) { currentMonthYear.setMonth(currentMonthYear.getMonth()+delta); renderReport(); };
 window.deleteMonthConfirm = async function() {
@@ -673,7 +688,7 @@ window.deleteDayConfirm = async function() {
 window.printReport = function() { window.print(); };
 window.printSalesReport = function() {
   const w = window.open("", "_blank");
-  w.document.write(`<html dir="rtl"><head><title>تقرير</title><style>table{border-collapse:collapse;} td,th{border:1px solid #ccc;padding:8px;}</style></head><body>${document.querySelector("#page-sales .table-wrap").innerHTML}</body></html>`);
+  w.document.write(`<html dir="rtl"><head><title>تقرير المبيعات</title><style>table{border-collapse:collapse;} td,th{border:1px solid #ccc;padding:8px;}</style></head><body>${document.querySelector("#page-sales .table-wrap").innerHTML}</body></html>`);
   w.document.close(); w.print();
 };
 window.clearSalesConfirm = function() {
