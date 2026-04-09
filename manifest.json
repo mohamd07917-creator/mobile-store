@@ -2,7 +2,7 @@
   "name": "موبايل ستور برو",
   "short_name": "موبايل ستور",
   "description": "نظام إدارة متجر الجوالات مع مزامنة سحابية، باركود، كاميرا، ديون وتقارير",
-  "start_url": "https://github.com/mohamd07917-creator/mobile-store/blob/main/index.html",
+  "start_url": "/mobile-store/index.html",
   "display": "standalone",
   "theme_color": "#0a0f1e",
   "background_color": "#0a0f1e",
