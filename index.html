@@ -194,7 +194,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 .repair-cost{font-size:1.2rem;font-weight:900;color:var(--gold);}
 .repair-customer{font-size:0.8rem;color:var(--text2);margin-top:6px;}
 .repair-dates{font-size:0.72rem;color:var(--text2);margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;}
-.repair-img{width:100%;height:100px;object-fit:cover;border-radius:8px;margin-top:8px;border:1px solid var(--border);}
+.repair-img{width:100%;height:100px;object-fit:cover;border-radius:8px;margin-top:8px;border:1px solid var(--border);cursor:pointer;}
 .repair-img-placeholder{width:100%;height:80px;background:var(--bg3);border-radius:8px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:2rem;border:1px dashed var(--border);}
 .repair-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 .status-filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
@@ -211,9 +211,15 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 .repair-receipt{background:var(--bg3);border:1px dashed var(--border);border-radius:12px;padding:16px;margin-top:12px;}
 .receipt-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.87rem;}
 .receipt-row:last-child{border-bottom:none;font-weight:800;font-size:1rem;color:var(--gold);}
-.img-upload-area{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:0.3s;margin-bottom:10px;}
+.img-upload-area{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:0.3s;margin-bottom:10px;position:relative;}
 .img-upload-area:hover{border-color:var(--orange);background:rgba(255,107,53,0.05);}
 .img-preview{max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;}
+
+/* كاميرا الصيانة */
+#repair-camera-container{display:none;position:relative;border:2px solid var(--orange);border-radius:12px;overflow:hidden;margin-bottom:10px;background:#000;}
+#repair-camera-video{width:100%;max-height:240px;object-fit:cover;display:block;}
+.camera-controls{display:flex;gap:8px;justify-content:center;padding:8px;background:rgba(0,0,0,0.6);}
+.camera-source-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
 
 /* REPAIR MONTHLY REPORT */
 .repair-month-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
@@ -224,6 +230,16 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 .repair-stat.gold .rs-val{color:var(--gold);}
 .repair-stat.cyan .rs-val{color:var(--accent);}
 .repair-stat.red .rs-val{color:var(--red);}
+
+/* مودال عرض صورة مكبرة */
+#img-zoom-modal{position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;display:none;align-items:center;justify-content:center;}
+#img-zoom-modal.open{display:flex;}
+#img-zoom-modal img{max-width:92vw;max-height:90vh;border-radius:12px;border:2px solid var(--orange);}
+#img-zoom-modal .close-zoom{position:absolute;top:20px;left:20px;background:rgba(255,71,87,0.2);border:1px solid var(--red);color:var(--red);padding:8px 16px;border-radius:10px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;font-weight:700;}
+
+/* صندوق إعادة الإيرادات */
+.reset-revenue-panel{background:var(--card2);border:1px solid rgba(255,107,53,0.3);border-radius:14px;padding:16px;margin-bottom:16px;}
+.reset-revenue-panel h4{color:var(--orange);margin-bottom:10px;font-size:1rem;}
 
 @media(max-width:768px){
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
@@ -243,6 +259,12 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 <div id="connection-status"><span class="led offline" id="connLed"></span><span id="connText">جاري الاتصال...</span></div>
 <div id="sale-success-overlay"><div class="sale-success-card"><span class="sale-icon">🎉</span><h2>تم البيع بنجاح!</h2><div id="ss-product" class="sale-detail"></div><div id="ss-qty" class="sale-detail"></div><div id="ss-type" class="sale-detail"></div><div id="ss-total" class="sale-total"></div><div style="display:flex;gap:10px;justify-content:center;"><button class="btn btn-success" onclick="window.closeSaleSuccess()">✓ حسناً</button><button class="btn btn-outline" onclick="window.printLastInvoice()">طبع الفاتورة</button></div></div></div>
 <div id="confirm-dialog"><div class="confirm-box"><div class="ci" id="confirm-icon">⚠️</div><h3 id="confirm-title">تأكيد</h3><p id="confirm-msg"></p><div class="confirm-actions"><button class="btn btn-danger" id="confirm-yes-btn">تأكيد</button><button class="btn btn-outline" onclick="window.closeConfirm()">إلغاء</button></div></div></div>
+
+<!-- مودال تكبير الصورة -->
+<div id="img-zoom-modal">
+  <button class="close-zoom" onclick="document.getElementById('img-zoom-modal').classList.remove('open')">✕ إغلاق</button>
+  <img id="img-zoom-src" src="" alt="">
+</div>
 
 <!-- مودال تعديل منتج -->
 <div id="edit-product-modal" class="modal-bg"><div class="modal"><h3>✏ تعديل المنتج</h3><div class="form-group"><label>اسم المنتج</label><input id="edit-name" class="form-control"></div><div class="form-group"><label>الفئة</label><select id="edit-cat" class="form-control"><option>كفرات</option><option>شواحن</option><option>سماعات</option><option>كيبل</option><option>زجاجة</option><option>أخرى</option></select></div><div class="form-group"><label>سعر البيع (د.ع)</label><input id="edit-price" type="number" class="form-control"></div><div class="form-group"><label>سعر الشراء (التكلفة)</label><input id="edit-cost" type="number" class="form-control"></div><div class="form-group"><label>حد التنبيه</label><input id="edit-alert" type="number" class="form-control"></div><div style="display:flex;gap:10px;justify-content:center;"><button class="btn btn-primary" id="edit-save-btn">✓ حفظ التغييرات</button><button class="btn btn-outline" onclick="closeEditModal()">إلغاء</button></div></div></div>
@@ -288,11 +310,11 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <div class="grid-2">
       <div class="form-group">
         <label>تكلفة الصيانة (د.ع)</label>
-        <input id="repair-cost" type="number" class="form-control repair-focus" placeholder="0">
+        <input id="repair-cost" type="number" class="form-control repair-focus" placeholder="0" min="0" step="1" oninput="this.value=Math.abs(parseInt(this.value)||0)||''">
       </div>
       <div class="form-group">
         <label>تكلفة القطعة (إن وجدت)</label>
-        <input id="repair-part-cost" type="number" class="form-control repair-focus" placeholder="0">
+        <input id="repair-part-cost" type="number" class="form-control repair-focus" placeholder="0" min="0" step="1" oninput="this.value=Math.abs(parseInt(this.value)||0)||''">
       </div>
     </div>
 
@@ -323,14 +345,31 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <textarea id="repair-notes" class="form-control repair-focus" rows="2" placeholder="ملاحظات عن الجهاز، الإكسسوارات المرفقة..."></textarea>
     </div>
 
+    <!-- قسم الصورة مع دعم الكاميرا الحية -->
     <div class="form-group">
-      <label>صورة الجهاز</label>
-      <div class="img-upload-area" onclick="document.getElementById('repair-img-input').click()">
+      <label>📷 صورة الجهاز</label>
+      <div class="camera-source-btns">
+        <button type="button" class="btn btn-outline btn-sm" onclick="openRepairCamera('user')">📷 كاميرا الحاسوب (أمامية)</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="openRepairCamera('environment')">📱 كاميرا الهاتف (خلفية)</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('repair-img-input').click()">🖼 اختيار من الجهاز</button>
+      </div>
+
+      <!-- عرض الكاميرا الحية -->
+      <div id="repair-camera-container">
+        <video id="repair-camera-video" autoplay playsinline muted></video>
+        <div class="camera-controls">
+          <button type="button" class="btn btn-orange btn-sm" onclick="captureRepairPhoto()">📸 التقاط صورة</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="stopRepairCamera()">⏹ إغلاق الكاميرا</button>
+        </div>
+      </div>
+
+      <div class="img-upload-area" onclick="document.getElementById('repair-img-input').click()" id="repair-img-drop" style="margin-top:8px;">
         <div style="font-size:2rem;">📷</div>
-        <div style="font-size:0.85rem;color:var(--text2);margin-top:4px;">اضغط لاختيار صورة للجهاز</div>
-        <img id="repair-img-preview" class="img-preview" style="display:none;">
+        <div style="font-size:0.85rem;color:var(--text2);margin-top:4px;">اضغط لاختيار صورة أو استخدم الكاميرا أعلاه</div>
+        <img id="repair-img-preview" class="img-preview" style="display:none;" onclick="event.stopPropagation();zoomImg(this.src)">
       </div>
       <input type="file" id="repair-img-input" accept="image/*" style="display:none;" onchange="handleRepairImgUpload(event)">
+      <button type="button" class="btn btn-danger btn-sm" id="clear-repair-img-btn" style="display:none;margin-top:6px;" onclick="clearRepairImg()">🗑 حذف الصورة</button>
     </div>
 
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
@@ -439,7 +478,6 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <div class="stat-box green"><div class="sb-icon">🛒</div><div class="sb-val" id="stat-sales">0</div><div class="sb-lbl">عمليات المبيعات</div></div>
     <div class="stat-box red"><div class="sb-icon">💳</div><div class="sb-val" id="stat-debts">0</div><div class="sb-lbl">ديون باقية</div></div>
   </div>
-  <!-- إحصائيات الصيانة في الداشبورد -->
   <div class="grid-4" style="margin-top:14px;">
     <div class="stat-box orange"><div class="sb-icon">🔧</div><div class="sb-val" id="dash-repair-total">0</div><div class="sb-lbl">طلبات صيانة كلية</div></div>
     <div class="stat-box" style=""><div class="sb-icon">⏳</div><div class="sb-val" id="dash-repair-pending" style="color:var(--yellow);">0</div><div class="sb-lbl">قيد الصيانة</div></div>
@@ -657,6 +695,23 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 <div class="page admin-only" id="page-settings">
   <div class="card">
     <div class="card-title">⚙ إعدادات النظام</div>
+
+    <!-- ===== قسم إعادة تعيين الإيرادات والأرباح ===== -->
+    <div class="reset-revenue-panel">
+      <h4>🔄 إعادة تعيين الإيرادات والأرباح اليومية</h4>
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:12px;">يمكنك إعادة عرض العداد اليومي للإيرادات والأرباح دون حذف أي سجلات. تبقى كل البيانات محفوظة في التقارير.</p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 16px;">
+          <div style="font-size:0.75rem;color:var(--text2);">آخر إعادة تعيين</div>
+          <div style="font-weight:800;color:var(--orange);" id="last-reset-time">—</div>
+        </div>
+        <button class="btn btn-warning btn-sm" onclick="window.resetDailyRevenue()">🔄 إعادة التعيين الآن</button>
+      </div>
+      <div style="margin-top:12px;font-size:0.82rem;color:var(--text2);">
+        💡 ملاحظة: تظهر الإيرادات المُعاد تعيينها في الهيدر ونقطة البيع فقط. لن يتأثر أي تقرير أو سجل.
+      </div>
+    </div>
+
     <div class="settings-section"><h3>🔔 الإشعارات</h3><div><button class="btn btn-outline btn-sm" onclick="window.requestNotifPerm()">تفعيل الإشعارات</button></div></div>
     <div class="settings-section"><h3>💾 النسخ الاحتياطي</h3><div><button class="btn btn-outline btn-sm" onclick="window.exportData()">📤 تصدير JSON</button><button class="btn btn-outline btn-sm" onclick="document.getElementById('import-file').click()">📥 استيراد JSON</button><input type="file" id="import-file" style="display:none" accept=".json" onchange="window.handleImport(event)"></div></div>
     <div class="settings-section">
@@ -699,7 +754,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// مراقبة الاتصال
 let isOnline = true;
 const connLed = document.getElementById('connLed');
 const connText = document.getElementById('connText');
@@ -717,7 +771,7 @@ updateConnectionStatus(true);
 const productsCol = collection(db, "products");
 const salesCol = collection(db, "sales");
 const debtsCol = collection(db, "debts");
-const repairsCol = collection(db, "repairs"); // مجموعة الصيانة المستقلة
+const repairsCol = collection(db, "repairs");
 
 let products = [], sales = [], debts = [], repairs = [];
 let currentUser = null, selectedUser = null, pinEntry = "";
@@ -731,9 +785,25 @@ const ADMIN_PIN = "1723";
 let unsubscribeProducts = null, unsubscribeSales = null, unsubscribeDebts = null, unsubscribeRepairs = null;
 let currentEditProductId = null, pendingPrintProduct = null;
 let activeRepairFilter = "all";
-let currentRepairImg = null; // base64 صورة الجهاز
+let currentRepairImg = null;
 let editingRepairId = null;
 let selectedBrand = "";
+let repairCameraStream = null;
+
+// إعادة تعيين الإيرادات اليومية - نتتبع تاريخ إعادة التعيين في localStorage
+let revenueResetDate = localStorage.getItem("revenueResetDate") || null;
+function getEffectiveSalesForToday() {
+  const today = new Date().toISOString().slice(0,10);
+  if (revenueResetDate && revenueResetDate === today) {
+    const resetTime = localStorage.getItem("revenueResetTime") || "00:00:00";
+    return sales.filter(s => {
+      if (!s.date.startsWith(today)) return false;
+      const saleTime = s.date.slice(11,19);
+      return saleTime >= resetTime;
+    });
+  }
+  return sales.filter(s => s.date.startsWith(today));
+}
 
 // ======= Toast =======
 function notify(msg, type = "success") {
@@ -766,7 +836,7 @@ function printInvoice(s) {
   w.document.close(); w.print();
 }
 
-// ======= Firebase CRUD - المنتجات والمبيعات =======
+// ======= Firebase CRUD =======
 async function addProductToDB(p) { await setDoc(doc(productsCol, p.id), p); notify(`✅ تم إضافة "${p.name}" للمخزون`); }
 async function deleteProductFromDB(id) { await deleteDoc(doc(productsCol, id)); }
 async function updateProductToDB(id, d) { await updateDoc(doc(productsCol, id), d); notify("✅ تم التحديث"); }
@@ -776,8 +846,6 @@ async function deleteSaleFromDB(id) { await deleteDoc(doc(salesCol, id)); }
 async function addDebtToDB(d) { await setDoc(doc(debtsCol, d.saleId), d); }
 async function updateDebtPaid(sid) { await updateDoc(doc(debtsCol, sid), { paid: true }); }
 async function deleteDebtFromDB(sid) { await deleteDoc(doc(debtsCol, sid)); }
-
-// ======= Firebase CRUD - الصيانة =======
 async function addRepairToDB(r) { await setDoc(doc(repairsCol, r.id), r); }
 async function updateRepairInDB(id, data) { await updateDoc(doc(repairsCol, id), data); }
 async function deleteRepairFromDB(id) { await deleteDoc(doc(repairsCol, id)); }
@@ -818,15 +886,74 @@ function computeTotalCost() {
   if (el) el.innerText = total.toLocaleString()+" د.ع";
 }
 
+// ======= تكبير الصورة =======
+window.zoomImg = function(src) {
+  document.getElementById("img-zoom-src").src = src;
+  document.getElementById("img-zoom-modal").classList.add("open");
+};
+
+// ======= كاميرا الصيانة =======
+window.openRepairCamera = async function(facing) {
+  stopRepairCamera();
+  try {
+    const constraints = { video: { facingMode: facing || "environment" }, audio: false };
+    repairCameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const video = document.getElementById("repair-camera-video");
+    video.srcObject = repairCameraStream;
+    document.getElementById("repair-camera-container").style.display = "block";
+    document.getElementById("repair-img-drop").style.display = "none";
+  } catch(e) {
+    notify("❌ لا يمكن الوصول للكاميرا: " + e.message, "error");
+  }
+};
+
+window.captureRepairPhoto = function() {
+  const video = document.getElementById("repair-camera-video");
+  const canvas = document.createElement("canvas");
+  const MAX = 700;
+  let w = video.videoWidth, h = video.videoHeight;
+  if (w > MAX) { h = Math.round(h*(MAX/w)); w = MAX; }
+  if (h > MAX) { w = Math.round(w*(MAX/h)); h = MAX; }
+  canvas.width = w; canvas.height = h;
+  canvas.getContext("2d").drawImage(video, 0, 0, w, h);
+  currentRepairImg = canvas.toDataURL("image/jpeg", 0.82);
+  const prev = document.getElementById("repair-img-preview");
+  prev.src = currentRepairImg;
+  prev.style.display = "block";
+  document.getElementById("clear-repair-img-btn").style.display = "inline-flex";
+  stopRepairCamera();
+  document.getElementById("repair-img-drop").style.display = "block";
+  notify("📸 تم التقاط الصورة!", "success");
+};
+
+window.stopRepairCamera = stopRepairCamera;
+function stopRepairCamera() {
+  if (repairCameraStream) {
+    repairCameraStream.getTracks().forEach(t => t.stop());
+    repairCameraStream = null;
+  }
+  document.getElementById("repair-camera-container").style.display = "none";
+  document.getElementById("repair-img-drop").style.display = "block";
+}
+
+window.clearRepairImg = function() {
+  currentRepairImg = null;
+  const prev = document.getElementById("repair-img-preview");
+  prev.src = ""; prev.style.display = "none";
+  document.getElementById("clear-repair-img-btn").style.display = "none";
+};
+
 // ======= REPAIR MODAL =======
 window.openRepairModal = openRepairModal;
 function openRepairModal(repairId = null) {
   editingRepairId = repairId;
   currentRepairImg = null;
   selectedBrand = "";
+  stopRepairCamera();
   document.querySelectorAll(".brand-logo-btn").forEach(b => b.classList.remove("selected"));
   document.getElementById("repair-brand-other").style.display = "none";
   document.getElementById("repair-brand-other").value = "";
+  document.getElementById("clear-repair-img-btn").style.display = "none";
 
   if (repairId) {
     const r = repairs.find(x => x.id === repairId);
@@ -835,15 +962,15 @@ function openRepairModal(repairId = null) {
     document.getElementById("repair-edit-id").value = repairId;
     document.getElementById("repair-device").value = r.device || "";
     document.getElementById("repair-issue").value = r.issue || "";
-    document.getElementById("repair-cost").value = r.cost || 0;
-    document.getElementById("repair-part-cost").value = r.partCost || 0;
+    // تأكد أن القيمة عدد صحيح موجب بدون طرح أي شيء
+    document.getElementById("repair-cost").value = Math.abs(parseInt(r.cost)||0) || "";
+    document.getElementById("repair-part-cost").value = Math.abs(parseInt(r.partCost)||0) || "";
     document.getElementById("repair-date-in").value = r.dateIn ? r.dateIn.slice(0,16) : "";
     document.getElementById("repair-date-out").value = r.dateOut ? r.dateOut.slice(0,16) : "";
     document.getElementById("repair-customer-name").value = r.customerName || "";
     document.getElementById("repair-customer-phone").value = r.customerPhone || "";
     document.getElementById("repair-notes").value = r.notes || "";
     selectedBrand = r.brand || "";
-    // تحديد الشركة
     const btn = document.querySelector(`.brand-logo-btn[data-brand="${r.brand}"]`);
     if (btn) { btn.classList.add("selected"); }
     else if (r.brand) {
@@ -856,6 +983,7 @@ function openRepairModal(repairId = null) {
       currentRepairImg = r.image;
       const prev = document.getElementById("repair-img-preview");
       prev.src = r.image; prev.style.display = "block";
+      document.getElementById("clear-repair-img-btn").style.display = "inline-flex";
     } else {
       document.getElementById("repair-img-preview").style.display = "none";
     }
@@ -879,6 +1007,7 @@ function openRepairModal(repairId = null) {
 
 window.closeRepairModal = closeRepairModal;
 function closeRepairModal() {
+  stopRepairCamera();
   document.getElementById("repair-modal").classList.remove("open");
   editingRepairId = null; currentRepairImg = null;
 }
@@ -900,21 +1029,21 @@ function selectBrand(brand, el) {
 window.handleRepairImgUpload = function(event) {
   const file = event.target.files[0];
   if (!file) return;
-  // ضغط الصورة قبل الحفظ
   const reader = new FileReader();
   reader.onload = (e) => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
-      const MAX = 600;
+      const MAX = 700;
       let w = img.width, h = img.height;
-      if (w > MAX) { h = h*(MAX/w); w = MAX; }
-      if (h > MAX) { w = w*(MAX/h); h = MAX; }
+      if (w > MAX) { h = Math.round(h*(MAX/w)); w = MAX; }
+      if (h > MAX) { w = Math.round(w*(MAX/h)); h = MAX; }
       canvas.width = w; canvas.height = h;
       canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-      currentRepairImg = canvas.toDataURL("image/jpeg", 0.75);
+      currentRepairImg = canvas.toDataURL("image/jpeg", 0.82);
       const prev = document.getElementById("repair-img-preview");
       prev.src = currentRepairImg; prev.style.display = "block";
+      document.getElementById("clear-repair-img-btn").style.display = "inline-flex";
     };
     img.src = e.target.result;
   };
@@ -925,8 +1054,9 @@ window.saveRepair = async function() {
   const brand = document.getElementById("repair-brand-other").value.trim() || selectedBrand;
   const device = document.getElementById("repair-device").value.trim();
   const issue = document.getElementById("repair-issue").value.trim();
-  const cost = parseFloat(document.getElementById("repair-cost").value) || 0;
-  const partCost = parseFloat(document.getElementById("repair-part-cost").value) || 0;
+  // استخدام parseInt لضمان عدد صحيح وليس عشري ودون طرح
+  const cost = Math.abs(parseInt(document.getElementById("repair-cost").value) || 0);
+  const partCost = Math.abs(parseInt(document.getElementById("repair-part-cost").value) || 0);
   const dateIn = document.getElementById("repair-date-in").value;
   const dateOut = document.getElementById("repair-date-out").value;
   const customerName = document.getElementById("repair-customer-name").value.trim();
@@ -950,7 +1080,7 @@ window.saveRepair = async function() {
       dateOut: dateOut || null,
       customerName, customerPhone, notes,
       image: currentRepairImg || null,
-      status: "pending", // pending | done | failed | delivered
+      status: "pending",
       technician: currentUser?.username || "غير محدد",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -967,7 +1097,11 @@ function renderRepairGrid() {
   let filtered = [...repairs];
 
   if (activeRepairFilter !== "all") filtered = filtered.filter(r => r.status === activeRepairFilter);
-  if (searchTerm) filtered = filtered.filter(r => r.customerName?.includes(searchTerm) || r.device?.includes(searchTerm) || r.brand?.includes(searchTerm));
+  if (searchTerm) filtered = filtered.filter(r =>
+    r.customerName?.includes(searchTerm) ||
+    r.device?.includes(searchTerm) ||
+    r.brand?.includes(searchTerm)
+  );
 
   const grid = document.getElementById("repair-grid");
   if (!filtered.length) {
@@ -980,14 +1114,24 @@ function renderRepairGrid() {
     const badgeClass = {pending:"badge-yellow", done:"badge-green", failed:"badge-red", delivered:"badge-blue"}[r.status] || "badge-yellow";
     const dateIn = r.dateIn ? new Date(r.dateIn).toLocaleDateString("ar-IQ") : "—";
     const dateOut = r.dateOut ? new Date(r.dateOut).toLocaleDateString("ar-IQ") : "غير محدد";
-    const totalCost = (r.cost||0) + (r.partCost||0);
+    // عرض تكلفة صحيحة بدون خصم
+    const totalCost = (Math.abs(parseInt(r.cost)||0)) + (Math.abs(parseInt(r.partCost)||0));
+
+    // في بطاقة "تم التسليم" نُظهر نجح/فشل بجانبها
+    let deliveredOutcome = "";
+    if (r.status === "delivered") {
+      deliveredOutcome = r.repairOutcome === "failed"
+        ? `<span class="badge badge-red" style="margin-right:6px;">❌ فشل الإصلاح</span>`
+        : `<span class="badge badge-green" style="margin-right:6px;">✅ نجح الإصلاح</span>`;
+    }
+
     return `
       <div class="repair-card status-${r.status}">
         <div class="repair-card-header">
           <div class="repair-brand-badge">${r.brand}</div>
           <div class="repair-id">#${r.id.slice(-6)}</div>
         </div>
-        ${r.image ? `<img src="${r.image}" class="repair-img" alt="صورة الجهاز">` : `<div class="repair-img-placeholder">📱</div>`}
+        ${r.image ? `<img src="${r.image}" class="repair-img" alt="صورة الجهاز" onclick="window.zoomImg('${r.image}')">` : `<div class="repair-img-placeholder">📱</div>`}
         <div class="repair-device-name" style="margin-top:8px;">📱 ${r.device}</div>
         <div class="repair-issue">🔴 ${r.issue}</div>
         <div class="repair-cost">${totalCost.toLocaleString()} د.ع</div>
@@ -996,15 +1140,19 @@ function renderRepairGrid() {
           <span>📥 ${dateIn}</span>
           <span>📤 ${dateOut}</span>
         </div>
-        <div style="margin-top:8px;"><span class="badge ${badgeClass}">${statusLabel}</span></div>
+        <div style="margin-top:8px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+          <span class="badge ${badgeClass}">${statusLabel}</span>
+          ${deliveredOutcome}
+        </div>
         <div class="repair-actions">
           <button class="btn btn-outline btn-sm" onclick="window.viewRepairDetail('${r.id}')">👁 تفاصيل</button>
           ${isAdmin() ? `<button class="btn btn-warning btn-sm" onclick="openRepairModal('${r.id}')">✏</button>` : ""}
           ${r.status === "pending" ? `
-            <button class="btn btn-success btn-sm" onclick="window.markRepairStatus('${r.id}','done')">✅</button>
-            <button class="btn btn-danger btn-sm" onclick="window.markRepairStatus('${r.id}','failed')">❌</button>
+            <button class="btn btn-success btn-sm" onclick="window.markRepairStatus('${r.id}','done')">✅ نجح</button>
+            <button class="btn btn-danger btn-sm" onclick="window.markRepairStatus('${r.id}','failed')">❌ فشل</button>
           ` : ""}
-          ${r.status === "done" ? `<button class="btn btn-primary btn-sm" onclick="window.markRepairStatus('${r.id}','delivered')">📦 تسليم</button>` : ""}
+          ${r.status === "done" ? `<button class="btn btn-primary btn-sm" onclick="window.deliverRepair('${r.id}','done')">📦 تسليم (نجح)</button>` : ""}
+          ${r.status === "failed" ? `<button class="btn btn-orange btn-sm" onclick="window.deliverRepair('${r.id}','failed')">📦 تسليم (فشل)</button>` : ""}
           ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="window.deleteRepairConfirm('${r.id}')">🗑</button>` : ""}
         </div>
       </div>
@@ -1026,8 +1174,15 @@ window.filterRepairs = function() { renderRepairGrid(); };
 
 window.markRepairStatus = async function(id, status) {
   await updateRepairInDB(id, { status, updatedAt: new Date().toISOString() });
-  const labels = {done:"✅ تم الإصلاح بنجاح!", failed:"❌ تم تسجيل فشل الإصلاح", delivered:"📦 تم تسليم الجهاز للزبون"};
-  notify(labels[status] || "تم التحديث", status === "done" ? "success" : status === "delivered" ? "info" : "error");
+  const labels = {done:"✅ تم الإصلاح بنجاح!", failed:"❌ تم تسجيل فشل الإصلاح"};
+  notify(labels[status] || "تم التحديث", status === "done" ? "success" : "error");
+};
+
+// تسليم الجهاز مع تسجيل نتيجة الإصلاح (نجح أو فشل)
+window.deliverRepair = async function(id, outcome) {
+  await updateRepairInDB(id, { status: "delivered", repairOutcome: outcome, updatedAt: new Date().toISOString() });
+  const msg = outcome === "done" ? "📦 تم تسليم الجهاز للزبون (إصلاح ناجح)" : "📦 تم تسليم الجهاز للزبون (إصلاح فاشل)";
+  notify(msg, "info");
 };
 
 window.deleteRepairConfirm = function(id) {
@@ -1042,20 +1197,26 @@ window.viewRepairDetail = function(id) {
   const r = repairs.find(x => x.id === id);
   if (!r) return;
   const statusLabel = {pending:"⏳ قيد الصيانة", done:"✅ تم الإصلاح", failed:"❌ فشل الإصلاح", delivered:"📦 تم التسليم"}[r.status] || r.status;
-  const totalCost = (r.cost||0) + (r.partCost||0);
+  const totalCost = (Math.abs(parseInt(r.cost)||0)) + (Math.abs(parseInt(r.partCost)||0));
+  let outcomeRow = "";
+  if (r.status === "delivered") {
+    const oc = r.repairOutcome === "failed" ? "❌ فشل الإصلاح" : "✅ نجح الإصلاح";
+    outcomeRow = `<div class="receipt-row"><span>نتيجة الإصلاح</span><span>${oc}</span></div>`;
+  }
   document.getElementById("repair-detail-content").innerHTML = `
     <div class="repair-receipt">
-      ${r.image ? `<img src="${r.image}" style="width:100%;border-radius:8px;margin-bottom:12px;">` : ""}
+      ${r.image ? `<img src="${r.image}" style="width:100%;border-radius:8px;margin-bottom:12px;cursor:pointer;" onclick="window.zoomImg('${r.image}')">` : ""}
       <div class="receipt-row"><span>الشركة</span><span>${r.brand}</span></div>
       <div class="receipt-row"><span>الجهاز</span><span>${r.device}</span></div>
       <div class="receipt-row"><span>العطل</span><span>${r.issue}</span></div>
       <div class="receipt-row"><span>الحالة</span><span>${statusLabel}</span></div>
+      ${outcomeRow}
       <div class="receipt-row"><span>الزبون</span><span>${r.customerName}</span></div>
       <div class="receipt-row"><span>رقم الهاتف</span><span>${r.customerPhone || "—"}</span></div>
       <div class="receipt-row"><span>تاريخ الاستلام</span><span>${r.dateIn ? new Date(r.dateIn).toLocaleString("ar-IQ") : "—"}</span></div>
       <div class="receipt-row"><span>موعد التسليم</span><span>${r.dateOut ? new Date(r.dateOut).toLocaleString("ar-IQ") : "—"}</span></div>
-      <div class="receipt-row"><span>أجرة الصيانة</span><span>${(r.cost||0).toLocaleString()} د.ع</span></div>
-      <div class="receipt-row"><span>تكلفة القطعة</span><span>${(r.partCost||0).toLocaleString()} د.ع</span></div>
+      <div class="receipt-row"><span>أجرة الصيانة</span><span>${(Math.abs(parseInt(r.cost)||0)).toLocaleString()} د.ع</span></div>
+      <div class="receipt-row"><span>تكلفة القطعة</span><span>${(Math.abs(parseInt(r.partCost)||0)).toLocaleString()} د.ع</span></div>
       ${r.notes ? `<div class="receipt-row"><span>ملاحظات</span><span>${r.notes}</span></div>` : ""}
       <div class="receipt-row"><span>الفني</span><span>${r.technician || "—"}</span></div>
       <div class="receipt-row"><span>💰 الإجمالي</span><span>${totalCost.toLocaleString()} د.ع</span></div>
@@ -1063,8 +1224,12 @@ window.viewRepairDetail = function(id) {
   `;
   document.getElementById("repair-detail-actions").innerHTML = `
     <button class="btn btn-orange btn-sm" onclick="window.printRepairReceipt('${id}')">🖨️ طبع الوصل</button>
-    ${r.status === "pending" ? `<button class="btn btn-success btn-sm" onclick="window.markRepairStatus('${r.id}','done');closeRepairDetail();">✅ تم الإصلاح</button><button class="btn btn-danger btn-sm" onclick="window.markRepairStatus('${r.id}','failed');closeRepairDetail();">❌ فشل</button>` : ""}
-    ${r.status === "done" ? `<button class="btn btn-primary btn-sm" onclick="window.markRepairStatus('${r.id}','delivered');closeRepairDetail();">📦 تسليم للزبون</button>` : ""}
+    ${r.status === "pending" ? `
+      <button class="btn btn-success btn-sm" onclick="window.markRepairStatus('${r.id}','done');closeRepairDetail();">✅ نجح الإصلاح</button>
+      <button class="btn btn-danger btn-sm" onclick="window.markRepairStatus('${r.id}','failed');closeRepairDetail();">❌ فشل</button>
+    ` : ""}
+    ${r.status === "done" ? `<button class="btn btn-primary btn-sm" onclick="window.deliverRepair('${r.id}','done');closeRepairDetail();">📦 تسليم للزبون</button>` : ""}
+    ${r.status === "failed" ? `<button class="btn btn-orange btn-sm" onclick="window.deliverRepair('${r.id}','failed');closeRepairDetail();">📦 تسليم (فشل)</button>` : ""}
   `;
   document.getElementById("repair-detail-modal").classList.add("open");
 };
@@ -1073,13 +1238,15 @@ window.closeRepairDetail = () => document.getElementById("repair-detail-modal").
 window.printRepairReceipt = function(id) {
   const r = repairs.find(x => x.id === id);
   if (!r) return;
-  const total = (r.cost||0)+(r.partCost||0);
+  const total = (Math.abs(parseInt(r.cost)||0)) + (Math.abs(parseInt(r.partCost)||0));
+  const outcomeText = r.status === "delivered" ? (r.repairOutcome === "failed" ? "❌ فشل الإصلاح" : "✅ نجح الإصلاح") : "";
   const w = window.open("","_blank");
   w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>وصل الصيانة</title>
-  <style>body{font-family:Tajawal;padding:30px;max-width:400px;margin:0 auto;}h2{text-align:center;border-bottom:2px solid #333;padding-bottom:10px;}.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ccc;}.total{font-size:1.3rem;font-weight:900;color:#c0392b;}.logo{text-align:center;font-size:2rem;margin-bottom:8px;}</style>
+  <style>body{font-family:Tajawal;padding:30px;max-width:400px;margin:0 auto;}h2{text-align:center;border-bottom:2px solid #333;padding-bottom:10px;}.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ccc;}.total{font-size:1.3rem;font-weight:900;color:#c0392b;}.logo{text-align:center;font-size:2rem;margin-bottom:8px;}img{max-width:100%;border-radius:8px;margin-bottom:10px;}</style>
   </head><body>
   <div class="logo">🔧</div>
   <h2>وصل الصيانة</h2>
+  ${r.image ? `<img src="${r.image}">` : ""}
   <div class="row"><span>رقم الطلب</span><span>#${r.id.slice(-8)}</span></div>
   <div class="row"><span>الجهاز</span><span>${r.brand} ${r.device}</span></div>
   <div class="row"><span>العطل</span><span>${r.issue}</span></div>
@@ -1087,8 +1254,9 @@ window.printRepairReceipt = function(id) {
   ${r.customerPhone ? `<div class="row"><span>الهاتف</span><span>${r.customerPhone}</span></div>` : ""}
   <div class="row"><span>تاريخ الاستلام</span><span>${r.dateIn ? new Date(r.dateIn).toLocaleDateString("ar-IQ") : "—"}</span></div>
   <div class="row"><span>موعد التسليم</span><span>${r.dateOut ? new Date(r.dateOut).toLocaleDateString("ar-IQ") : "—"}</span></div>
-  <div class="row"><span>أجرة الصيانة</span><span>${(r.cost||0).toLocaleString()} د.ع</span></div>
-  ${r.partCost ? `<div class="row"><span>تكلفة القطعة</span><span>${r.partCost.toLocaleString()} د.ع</span></div>` : ""}
+  <div class="row"><span>أجرة الصيانة</span><span>${(Math.abs(parseInt(r.cost)||0)).toLocaleString()} د.ع</span></div>
+  ${r.partCost ? `<div class="row"><span>تكلفة القطعة</span><span>${(Math.abs(parseInt(r.partCost)||0)).toLocaleString()} د.ع</span></div>` : ""}
+  ${outcomeText ? `<div class="row"><span>النتيجة</span><span>${outcomeText}</span></div>` : ""}
   ${r.notes ? `<div class="row"><span>ملاحظات</span><span>${r.notes}</span></div>` : ""}
   <div class="row total"><span>💰 الإجمالي</span><span>${total.toLocaleString()} د.ع</span></div>
   <p style="text-align:center;margin-top:20px;color:#666;">شكراً لثقتكم بنا</p>
@@ -1101,10 +1269,11 @@ window.printRepairReceipt = function(id) {
 function renderRepairStats() {
   const total = repairs.length;
   const pending = repairs.filter(r => r.status==="pending").length;
-  const done = repairs.filter(r => r.status==="done" || r.status==="delivered").length;
+  const done = repairs.filter(r => r.status==="done").length;
   const failed = repairs.filter(r => r.status==="failed").length;
   const delivered = repairs.filter(r => r.status==="delivered").length;
-  const revenue = repairs.filter(r => r.status==="done"||r.status==="delivered").reduce((s,r)=>(s+(r.cost||0)+(r.partCost||0)),0);
+  const revenue = repairs.filter(r => r.status==="done"||r.status==="delivered")
+    .reduce((s,r) => s + (Math.abs(parseInt(r.cost)||0)) + (Math.abs(parseInt(r.partCost)||0)), 0);
 
   safeSet("r-stat-total", total);
   safeSet("r-stat-pending", pending);
@@ -1114,7 +1283,6 @@ function renderRepairStats() {
   safeSet("r-stat-revenue", revenue.toLocaleString());
   safeSet("h-repair-active", pending);
 
-  // داشبورد
   safeSet("dash-repair-total", total);
   safeSet("dash-repair-pending", pending);
   safeSet("dash-repair-done", done);
@@ -1122,19 +1290,29 @@ function renderRepairStats() {
   const monthRepairRevenue = repairs.filter(r=>{
     const d=new Date(r.dateIn||r.createdAt);
     return d.getMonth()===m && d.getFullYear()===y && (r.status==="done"||r.status==="delivered");
-  }).reduce((s,r)=>(s+(r.cost||0)+(r.partCost||0)),0);
+  }).reduce((s,r) => s + (Math.abs(parseInt(r.cost)||0)) + (Math.abs(parseInt(r.partCost)||0)), 0);
   safeSet("dash-repair-revenue", monthRepairRevenue.toLocaleString());
 
-  // آخر طلبات الصيانة في الداشبورد
   const recentRepairs = repairs.slice(0,5);
   const recentEl = document.getElementById("recent-repairs-dash");
   if (recentEl) {
-    recentEl.innerHTML = recentRepairs.length ? recentRepairs.map(r => `
-      <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px;margin-bottom:6px;">
-        <span>${r.brand} ${r.device} — ${r.customerName}</span>
-        <span class="badge ${{pending:"badge-yellow",done:"badge-green",failed:"badge-red",delivered:"badge-blue"}[r.status]||"badge-yellow"}">${{pending:"⏳",done:"✅",failed:"❌",delivered:"📦"}[r.status]||""}</span>
-      </div>
-    `).join("") : '<div class="empty-state">لا توجد طلبات</div>';
+    recentEl.innerHTML = recentRepairs.length ? recentRepairs.map(r => {
+      let outcomeBadge = "";
+      if (r.status === "delivered") {
+        outcomeBadge = r.repairOutcome === "failed"
+          ? `<span class="badge badge-red" style="font-size:0.65rem;">❌</span>`
+          : `<span class="badge badge-green" style="font-size:0.65rem;">✅</span>`;
+      }
+      return `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--bg3);border-radius:8px;margin-bottom:6px;">
+          <span style="font-size:0.85rem;">${r.brand} ${r.device} — ${r.customerName}</span>
+          <div style="display:flex;gap:4px;align-items:center;">
+            ${outcomeBadge}
+            <span class="badge ${{pending:"badge-yellow",done:"badge-green",failed:"badge-red",delivered:"badge-blue"}[r.status]||"badge-yellow"}">${{pending:"⏳",done:"✅",failed:"❌",delivered:"📦"}[r.status]||""}</span>
+          </div>
+        </div>
+      `;
+    }).join("") : '<div class="empty-state">لا توجد طلبات</div>';
   }
 }
 
@@ -1151,9 +1329,11 @@ function renderRepairReport() {
 
   const total = monthRepairs.length;
   const done = monthRepairs.filter(r => r.status==="done"||r.status==="delivered").length;
-  const failed = monthRepairs.filter(r => r.status==="failed").length;
-  const revenue = monthRepairs.filter(r=>r.status==="done"||r.status==="delivered").reduce((s,r)=>(s+(r.cost||0)+(r.partCost||0)),0);
-  const profit = monthRepairs.filter(r=>r.status==="done"||r.status==="delivered").reduce((s,r)=>(s+(r.cost||0)),0); // الأجرة فقط كربح
+  const failed = monthRepairs.filter(r => r.status==="failed" || (r.status==="delivered" && r.repairOutcome==="failed")).length;
+  const revenue = monthRepairs.filter(r=>r.status==="done"||r.status==="delivered")
+    .reduce((s,r) => s + (Math.abs(parseInt(r.cost)||0)) + (Math.abs(parseInt(r.partCost)||0)), 0);
+  const profit = monthRepairs.filter(r=>r.status==="done"||r.status==="delivered")
+    .reduce((s,r) => s + (Math.abs(parseInt(r.cost)||0)), 0);
 
   safeSet("rm-total", total);
   safeSet("rm-done", done);
@@ -1161,19 +1341,22 @@ function renderRepairReport() {
   safeSet("rm-revenue", revenue.toLocaleString());
   safeSet("rm-profit", profit.toLocaleString());
 
-  // جدول التفاصيل
   const tbody = document.getElementById("repair-monthly-body");
   if (tbody) {
     tbody.innerHTML = monthRepairs.length ? monthRepairs.map((r,i) => {
-      const statusLabel = {pending:"⏳ قيد الصيانة", done:"✅ نجح", failed:"❌ فشل", delivered:"📦 مُسلَّم"}[r.status]||r.status;
+      let statusLabel = {pending:"⏳ قيد الصيانة", done:"✅ نجح", failed:"❌ فشل", delivered:"📦 مُسلَّم"}[r.status]||r.status;
+      if (r.status === "delivered") {
+        statusLabel += r.repairOutcome === "failed" ? " (❌ فشل)" : " (✅ نجح)";
+      }
       const badgeClass = {pending:"badge-yellow",done:"badge-green",failed:"badge-red",delivered:"badge-blue"}[r.status]||"";
+      const totalCost = (Math.abs(parseInt(r.cost)||0)) + (Math.abs(parseInt(r.partCost)||0));
       return `<tr>
         <td>${i+1}</td>
         <td>${r.device}</td>
         <td>${r.brand}</td>
         <td>${r.issue}</td>
         <td>${r.customerName}<br><small style="color:var(--text2)">${r.customerPhone||""}</small></td>
-        <td style="color:var(--gold);">${((r.cost||0)+(r.partCost||0)).toLocaleString()} د.ع</td>
+        <td style="color:var(--gold);">${totalCost.toLocaleString()} د.ع</td>
         <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
         <td>${r.dateIn ? new Date(r.dateIn).toLocaleDateString("ar-IQ") : "—"}</td>
         <td>${r.dateOut ? new Date(r.dateOut).toLocaleDateString("ar-IQ") : "—"}</td>
@@ -1181,8 +1364,7 @@ function renderRepairReport() {
     }).join("") : '<tr><td colspan="9" style="text-align:center">لا توجد سجلات</td></tr>';
   }
 
-  // رسوم بيانية للصيانة
-  // رسم أنواع الأعطال
+  // رسوم بيانية
   const issueCount = {};
   monthRepairs.forEach(r => { issueCount[r.issue] = (issueCount[r.issue]||0)+1; });
   const issueCtx = document.getElementById("repair-issues-chart");
@@ -1195,7 +1377,6 @@ function renderRepairReport() {
     });
   }
 
-  // رسم الشركات
   const brandCount = {};
   monthRepairs.forEach(r => { brandCount[r.brand] = (brandCount[r.brand]||0)+1; });
   const brandCtx = document.getElementById("repair-brands-chart");
@@ -1211,6 +1392,30 @@ function renderRepairReport() {
 
 window.changeRepairMonth = function(d) { currentRepairMonthYear.setMonth(currentRepairMonthYear.getMonth()+d); renderRepairReport(); };
 window.printRepairReport = function() { window.print(); };
+
+// ======= إعادة تعيين الإيرادات اليومية =======
+window.resetDailyRevenue = function() {
+  openConfirm("🔄","إعادة تعيين الإيرادات","سيتم إعادة عداد الإيرادات والأرباح من هذه اللحظة. لن يُحذف أي سجل.",() => {
+    const now = new Date();
+    revenueResetDate = now.toISOString().slice(0,10);
+    const resetTime = now.toISOString().slice(11,19);
+    localStorage.setItem("revenueResetDate", revenueResetDate);
+    localStorage.setItem("revenueResetTime", resetTime);
+    updateHeader();
+    renderDashboard();
+    safeSet("last-reset-time", now.toLocaleString("ar-IQ"));
+    notify("✅ تم إعادة تعيين الإيرادات اليومية", "success");
+  },"إعادة التعيين");
+};
+
+function loadResetTime() {
+  const saved = localStorage.getItem("revenueResetDate");
+  const savedTime = localStorage.getItem("revenueResetTime");
+  const el = document.getElementById("last-reset-time");
+  if (el && saved && savedTime) {
+    el.textContent = new Date(saved + "T" + savedTime).toLocaleString("ar-IQ");
+  }
+}
 
 // ======= نظام المبيعات =======
 function genId() { return "P"+Date.now()+Math.floor(Math.random()*9999); }
@@ -1475,6 +1680,7 @@ window.payDebtConfirm = saleId => {
     await updateDebtPaid(saleId); notify(`✅ تم تسديد دين ${d.name}`,"success");
   },"تسديد");
 };
+
 function renderDashboard() {
   safeSet("stat-items", products.length);
   safeSet("stat-sales", sales.length);
@@ -1500,10 +1706,11 @@ function renderDashboard() {
   safeSet("low-stock-list", low.length?low.map(p=>`<div style="background:rgba(255,71,87,0.1);padding:8px;margin-bottom:6px;border-radius:8px;">⚠ ${p.name} (${p.qty})</div>`).join(""):"<div style='color:var(--green);'>✅ المخزون كافٍ</div>");
   renderRepairStats();
 }
+
 function updateHeader() {
   safeSet("h-items", products.length);
-  const today=new Date().toISOString().slice(0,10);
-  const ts=sales.filter(s=>s.date.startsWith(today));
+  // استخدم المبيعات الفعّالة (بعد إعادة التعيين إن وجدت)
+  const ts = getEffectiveSalesForToday();
   safeSet("h-sales", ts.length);
   safeSet("h-rev", ts.reduce((a,b)=>a+b.total,0).toLocaleString()+" د.ع");
   if(isAdmin()){
@@ -1521,7 +1728,9 @@ function updateHeader() {
   safeSet("h-repair-active", pendingR);
   computeTotalCost();
 }
+
 function safeSet(id, val) { const el=document.getElementById(id); if(el) el.innerHTML=val; }
+
 function renderReport() {
   const y=currentMonthYear.getFullYear(),m=currentMonthYear.getMonth();
   const ms=sales.filter(s=>{const d=new Date(s.date); return d.getFullYear()===y&&d.getMonth()===m;});
@@ -1626,9 +1835,10 @@ async function doLogin(role) {
   document.querySelectorAll(".admin-only").forEach(el=>el.style.display=currentUser.role==="admin"?"":"none");
   subscribeProducts(); subscribeSales(); subscribeDebts(); subscribeRepairs();
   setInterval(()=>{const c=document.getElementById("clock"); if(c) c.innerText=new Date().toLocaleTimeString("ar-IQ");},1000);
+  loadResetTime();
 }
 function isAdmin() { return currentUser?.role==="admin"; }
-window.confirmLogout = () => openConfirm("👋","تسجيل الخروج","هل تريد الخروج؟",()=>location.reload());
+window.confirmLogout = () => openConfirm("👋","تسجيل الخروج","هل تريد الخروج؟",()=>{stopRepairCamera();location.reload();});
 window.showPage = id => {
   if(!isAdmin()&&(id==="add-product"||id==="settings"||id==="repair-report")){notify("❌ غير مصرح","error"); return;}
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -1645,6 +1855,7 @@ window.showPage = id => {
   if(id==="dashboard") renderDashboard();
   if(id==="repair") { renderRepairGrid(); renderRepairStats(); }
   if(id==="repair-report") renderRepairReport();
+  if(id==="settings") loadResetTime();
 };
 window.requestNotifPerm = () => { if("Notification" in window) Notification.requestPermission(); };
 
